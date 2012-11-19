@@ -3,3 +3,4 @@ venv
 *.pot
 *.pyc
 local_settings.py
+build
