@@ -9,15 +9,17 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+#rendered unnecessary by dj-database-url line below
+#see http://stackoverflow.com/questions/11071579/heroku-database-settings-injection-how-do-i-setup-my-dev-django-database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+#    'default': {
+#        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+#        'NAME': '',                      # Or path to database file if using sqlite3.
+#        'USER': '',                      # Not used with sqlite3.
+#        'PASSWORD': '',                  # Not used with sqlite3.
+#        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+#        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+#    }
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -151,5 +153,6 @@ LOGGING = {
 }
 
 
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+import dj_database_url                                 #postgres://username:password@host:port/database_name
+DATABASES['default'] =  dj_database_url.config(default='postgres://spurdev:spurword@localhost:5432/spurdb')
+
