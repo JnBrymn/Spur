@@ -108,6 +108,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    'templates',
 )
 
 INSTALLED_APPS = (
@@ -155,6 +156,5 @@ LOGGING = {
 
 
 import dj_database_url                                 #postgres://username:password@host:port/database_name
-#DATABASES['default'] =  dj_database_url.config()
 DATABASES['default'] =  dj_database_url.config(default='postgres://spurdev:spurword@localhost:5432/spurdb')
 
