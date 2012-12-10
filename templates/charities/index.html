@@ -1,0 +1,9 @@
+{% if charity_list %}
+    <ul>
+    {% for charity in charity_list %}
+        <li><a href="/charity/{{ charity.id }}/">{{ charity.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No charities are available.</p>
+{% endif %}

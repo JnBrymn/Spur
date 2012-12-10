@@ -5,13 +5,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^spurapp/', include('spurapp.urls')),
+    url('', include('spurapp.urls')),
     # Examples:
     # url(r'^$', 'spurproject.views.home', name='home'),
     # url(r'^spurproject/', include('spurproject.foo.urls')),
-    url(r'^$', 'spurapp.views.index'),
-    url(r'^charity/(?P<charity_id>\d+)/$', 'spurapp.views.charity'),
-    url(r'^charity/(?P<charity_id>\d+)/campaign/$', 'spurapp.views.campaign'),
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

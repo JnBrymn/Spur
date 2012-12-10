@@ -3,7 +3,8 @@ import urllib2
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
-from spurapp.models import Charity
+from spurapp.models import *
+from django.shortcuts import render_to_response, get_object_or_404
 
 @csrf_exempt
 def ipn(request):
@@ -88,6 +89,7 @@ def ipn(request):
         amount = parameters['mc_gross']
         email = parameters['payer_email']
         option = parameters.get('option_selection1', None)
+
  
         # update DB, or send email, whatever you want
         # Might want to check that you haven't already processed the txn_id
@@ -102,11 +104,23 @@ def ipn(request):
 
 def index(request):
     charity_list = Charity.objects.all();
-    output = ', '.join([c.name for c in charity_list])
-    return HttpResponse(output)
+##    t = loader.get_template('charities/index.html')
+##    c = Context({
+##        'charity_list': charity_list,
+##    })
+    # output = ', '.join([c.name for c in charity_list])
+    return render_to_response('charities/index.html', {'charity_list': charity_list})
 
-def charity(request, charity_id):
-    return HttpResponse("You're looking at charity %s." % charity_id)
+def charity_detail(request, charity_id):
+##    try:
+##        c = Charity.objects.get(pk=charity_id)
+##    except Charity.DoesNotExist:
+##        raise Http404
+    c = get_object_or_404(Charity, pk=charity_id)
+    return render_to_response('charities/detail.html', {'charity': c})
+
+##def charity(request, charity_id):
+##    return HttpResponse("You're looking at charity %s." % charity_id)
 
 def campaign(request, charity_id):
-    return HttpResponse("You're looking at the campaigns of poll %s." % charity_id)
+    return HttpResponse("You're looking at the campaigns of charity %s." % charity_id)
