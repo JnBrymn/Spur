@@ -4,3 +4,5 @@ venv
 *.pyc
 local_settings.py
 build
+.project
+.pydevproject
