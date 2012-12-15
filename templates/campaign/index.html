@@ -1,0 +1,9 @@
+{% if campaign_list %}
+    <ul>
+    {% for campaign in campaign_list %}
+        <li><a href="/campaign/{{ campaign.id }}/">{{ campaign.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No campaigns are available.</p>
+{% endif %}

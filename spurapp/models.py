@@ -12,6 +12,7 @@ class Campaign(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     charity = models.ForeignKey(Charity)
+    website = models.CharField(max_length=200)
     def __unicode__(self):
         return self.name+"_Charity: "+self.charity.name
 

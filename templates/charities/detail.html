@@ -1,1 +1,13 @@
-{{ charity }}
+<h1>{{ charity.name }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="/charity/{{ charity.id }}/edit/" method="post">
+{% csrf_token %}
+Name: <input type="text" name="name" id="1" value="{{ charity.name }}" />
+<!--{% for choice in poll.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+    <label for="choice{{ forloop.counter }}">{{ choice.choice }}</label><br />
+{% endfor %}-->
+<input type="submit" value="Change" />
+</form>{{ charity }}

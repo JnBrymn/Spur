@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 from spurapp.models import *
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext, loader, Context
 
 from lib.paypal import PayPal
 
@@ -33,10 +34,17 @@ def charity_detail(request, charity_id):
 ##    except Charity.DoesNotExist:
 ##        raise Http404
     c = get_object_or_404(Charity, pk=charity_id)
-    return render_to_response('charities/detail.html', {'charity': c})
+    return render_to_response('charities/detail.html', {'charity': c}, context_instance=RequestContext(request))
 
 ##def charity(request, charity_id):
 ##    return HttpResponse("You're looking at charity %s." % charity_id)
 
 def campaign(request, charity_id):
     return HttpResponse("You're looking at the campaigns of charity %s." % charity_id)
+	
+def redirect(request, donation_id):
+    donation = get_object_or_404(Donation, pk=donation_id)
+    context = Context({'website': donation.campaign.website,})
+    resp = HttpResponse(loader.get_template('redirect.html').render(context))
+    resp.set_cookie('parentID', donation.id)
+    return resp
