@@ -20,6 +20,11 @@ You will need to have postgreSQL set up with *user:spurdev* *database:spurdb* an
 
     python manage.py syncdb
     python manage.py runsever
+    
+Accessing Database
+------------------
+
+    psql -U spurdev -d spurdb
 
 Running in Heroku
 -----------------
