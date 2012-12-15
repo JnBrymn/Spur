@@ -79,24 +79,12 @@ class PayPal:
 
         if status in ['Pending', 'Completed']:
             callback(parameters)
-            # Give the payer the benefit of the doubt, and process pending payments
-            # (and completed ones, of course)
-
-            # Get some vars from the request
-            # full list: https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_IPNandPDTVariables
-            txn_id = parameters['txn_id']
-            amount = parameters['mc_gross']
-            email = parameters['payer_email']
-            option = parameters.get('option_selection1', None)
-
-            # update DB, or send email, whatever you want
-            # Might want to check that you haven't already processed the txn_id
 
         elif status in ['Denied', 'Failed', 'Reversed']:
-            txn_id = parameters['txn_id']
-            # update DB, or send email, delete account
+            pass
         else:
-            send_mail('Strange payment status - handle it manually', str(parameters), NOTIFY_EMAIL, [NOTIFY_EMAIL])
+            pass
+            #Strange payment status - handle it manually
 
         return HttpResponse("Ok")
 
