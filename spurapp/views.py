@@ -1,5 +1,6 @@
 import urllib
 import urllib2
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
@@ -15,8 +16,26 @@ def transaction_complete(parameters):
     for k in parameters:
         print k,"-->",parameters[k]
 
+    #import pdb; pdb.set_trace()
+
+    try:
+        donor = Donor.objects.get(email=parameters["payer_email"])
+    except Donor.DoesNotExist:
+        donor = Donor(name=parameters["first_name"]+" "+parameters["last_name"], email=
+                  parameters["payer_email"])
+        donor.save()
+    
+    # get all fields possible
+##    try:
+##        donation = Donation.objects.get(donor=donor, campaign
+    donation = Donation(amount=parameters["mc_gross_1"], donor=donor,
+                        date=datetime.datetime.now(),
+                        transaction_id=parameters["txn_id"])
+    donation.save()
+
 @csrf_exempt
 def ipn(request):
+    ## import pdb; pdb.set_trace()
     return PayPal.ipn(request,transaction_complete)
 
 def index(request):

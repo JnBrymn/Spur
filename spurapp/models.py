@@ -18,17 +18,19 @@ class Campaign(models.Model):
 
 class Donor(models.Model):
     name = models.CharField(null=True, max_length=200)
+    email = models.CharField(null=True, max_length=200)
     def __unicode__(self):
         return self.name
 
 class Donation(models.Model):
     amount = models.DecimalField(max_digits=16, decimal_places=4)
-    campaign = models.ForeignKey(Campaign)
+    campaign = models.ForeignKey(Campaign, null=True)
     donor = models.ForeignKey(Donor)
     parent_donation = models.ForeignKey('self', null=True, blank=True, related_name="child")
     date = models.DateTimeField()
-    cumulative_amt = models.DecimalField(max_digits=16, decimal_places=4)
+    cumulative_amt = models.DecimalField(max_digits=16, decimal_places=4, null=True)
     clicks = models.IntegerField(default=0)
+    transaction_id = models.CharField(max_length=100, null=True)
     def __unicode__(self):
         return ("Amount: "+str(self.amount)+"_Campaign: "+self.campaign.name+
                 "_Donor: "+self.donor.name+"_Date: "+str(self.date)+"_Cumu: "+str(self.cumulative_amt)
@@ -37,3 +39,7 @@ class Donation(models.Model):
         self.parent_donation.cumulative_amt += self.amount
         print ("Adding %s's donation to %s's cumulative_donation. Now it's %f." % (
             self.donor.name, self.parent_donation.donor.name, self.parent_donation.cumulative_amt))
+    def save(self, *args, **kwargs):
+        if self.cumulative_amt is None:
+            self.cumulative_amt = self.amount
+        super(Donation, self).save(*args, **kwargs)
