@@ -9,6 +9,7 @@ urlpatterns = patterns('spurapp.views',
     url(r'^charity/(?P<charity_id>\d+)/$', 'charity_detail'),
     url(r'^charity/(?P<charity_id>\d+)/campaign/$', 'campaign'),
     url(r'^redirect/(?P<donation_id>\d+)', 'redirect'),
+    url(r'^share/(?P<charity_id>\d+)', 'share'),
 	#url(r'^campaign/donate', 'donate'),
 	# url(r'^$',
 		# ListView.as_view(

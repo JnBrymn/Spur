@@ -67,3 +67,7 @@ def redirect(request, donation_id):
     resp = HttpResponse(loader.get_template('redirect.html').render(context))
     resp.set_cookie('parentID', donation.id)
     return resp
+
+def share(request, charity_id):
+    c = get_object_or_404(Charity, pk=charity_id)
+    return render_to_response('share/index.html', {'charity': c}, context_instance=RequestContext(request))
