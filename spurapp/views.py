@@ -28,7 +28,7 @@ def transaction_complete(parameters):
     # get all fields possible
 ##    try:
 ##        donation = Donation.objects.get(donor=donor, campaign
-    donation = Donation(amount=parameters["mc_gross_1"], donor=donor,
+    donation = Donation(amount=parameters["mc_gross"], donor=donor,
                         date=datetime.datetime.now(),
                         transaction_id=parameters["txn_id"])
     donation.save()
