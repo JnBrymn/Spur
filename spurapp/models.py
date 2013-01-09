@@ -32,12 +32,15 @@ class Donation(models.Model):
     clicks = models.IntegerField(default=0)
     transaction_id = models.CharField(max_length=100, null=True)
     def __unicode__(self):
-        return "unicode for donation"
-        #return ("Amount: "+str(self.amount)+"_Campaign: "+str(self.campaign.name or "unknown campaign")+
-        #        "_Donor: "+self.donor.name+"_Date: "+str(self.date)+"_Cumu: "+str(self.cumulative_amt)
-        #        +"_Clicks: "+str(self.clicks))
+        return ("Amount: "+str(self.amount)+
+                "_Campaign: "+str(self.campaign.name if self.campaign else "CAMPAIGN UNSPECIFIED")+
+                "_Donor: "+self.donor.name+
+                "_Date: "+str(self.date)+
+                "_Cumu: "+str(self.cumulative_amt)+
+                "_Clicks: "+str(self.clicks))
     def percolate_donation(self):
         self.parent_donation.cumulative_amt += self.amount
+        #TODO remove this print statement
         print ("Adding %s's donation to %s's cumulative_donation. Now it's %f." % (
             self.donor.name, self.parent_donation.donor.name, self.parent_donation.cumulative_amt))
     def save(self, *args, **kwargs):
