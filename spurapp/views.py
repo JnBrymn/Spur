@@ -71,3 +71,6 @@ def redirect(request, donation_id):
 def share(request, charity_id):
     c = get_object_or_404(Charity, pk=charity_id)
     return render_to_response('share/index.html', {'charity': c}, context_instance=RequestContext(request))
+
+def complete_donation(request):
+    return HttpResponse("Complete donation")
