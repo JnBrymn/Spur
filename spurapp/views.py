@@ -68,9 +68,10 @@ def redirect(request, donation_id):
     resp.set_cookie('parentID', donation.id)
     return resp
 
-def share(request, charity_id):
-    c = get_object_or_404(Charity, pk=charity_id)
-    return render_to_response('share/index.html', {'charity': c}, context_instance=RequestContext(request))
+def share(request, campaign_id):
+    c = get_object_or_404(Campaign, pk=campaign_id)
+    #TODO: eventually this will be a custom page for that campaign rather than the same page for everybody
+    return render_to_response('share.html')
 
 def complete_donation(request):
     return HttpResponse("Complete donation")

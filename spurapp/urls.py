@@ -9,24 +9,6 @@ urlpatterns = patterns('spurapp.views',
     url(r'^charity/(?P<charity_id>\d+)/$', 'charity_detail'),
     url(r'^charity/(?P<charity_id>\d+)/campaign/$', 'campaign'),
     url(r'^redirect/(?P<donation_id>\d+)', 'redirect'),
-    url(r'^share/(?P<charity_id>\d+)', 'share'),
-    url(r'^share/complete_donation$', 'complete_donation'),
-	#url(r'^campaign/donate', 'donate'),
-	# url(r'^$',
-		# ListView.as_view(
-			# queryset=Charity.objects,
-			# context_object_name='charity_list',
-			# template_name='charities/index.html')),
-	# url(r'^(?P<pk>\d+)/$',
-		# ListView.as_view(
-			# queryset=Campaign.objects,
-			# template_name='campaign/index.html')),
-	# url(r'^(?P<pk>\d+)/$',
-		# DetailView.as_view(
-			# model=Charity,
-			# template_name='charities/detail.html')),
-	# url(r'^(?P<pk>\d+)/$',
-		# DetailView.as_view(
-			# model=Campaign,
-			# template_name='campaign/detail.html')),
+    url(r'^share/(?P<campaign_id>\d+)', 'share'),
+    url(r'^complete_donation$', 'complete_donation'),
 )
