@@ -46,6 +46,7 @@ var tx = getUrlVars()["tx"];
 $.post("/complete_donation", {tx:tx}, function(result) {
   console.log(result);
   alert(tx);
+  $.cookie('parentID', null, { path: '/' });
 });
 </script>
 </head>

@@ -47,6 +47,8 @@ def campaign(request, charity_id):
 	
 def redirect(request, donation_id):
     donation = get_object_or_404(Donation, pk=donation_id)
+    (donation.clicks)+=1
+    donation.save()
     context = Context({'website': donation.campaign.website,})
     resp = HttpResponse(loader.get_template('redirect.html').render(context))
     resp.set_cookie('parentID', donation.id)
@@ -60,8 +62,15 @@ def share(request, campaign_id):
 
 def complete_donation(request):
     tx = request.POST["tx"]
-    try:
-        print Donation.objects.get(transaction_id=tx)
-    except Donation.DoesNotExist:
+    donation = Donation.objects.get(transaction_id=tx)
+    if donation:
+        if donation.parent_donation is None: #prevent abusing percolation
+            parentID = request.COOKIES["parentID"]
+            if parentID:
+                parent_donation = Donation.objects.get(id=parentID)
+                donation.parent_donation = parent_donation
+                donation.save()
+                donation.percolate_donation()    
+    else:
         print "Donation doesn't exist"
     return HttpResponse("Complete donation")
