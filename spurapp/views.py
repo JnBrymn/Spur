@@ -40,23 +40,7 @@ def ipn(request):
 
 def index(request):
     charity_list = Charity.objects.all();
-##    t = loader.get_template('charities/index.html')
-##    c = Context({
-##        'charity_list': charity_list,
-##    })
-    # output = ', '.join([c.name for c in charity_list])
     return render_to_response('charities/index.html', {'charity_list': charity_list})
-
-def charity_detail(request, charity_id):
-##    try:
-##        c = Charity.objects.get(pk=charity_id)
-##    except Charity.DoesNotExist:
-##        raise Http404
-    c = get_object_or_404(Charity, pk=charity_id)
-    return render_to_response('charities/detail.html', {'charity': c}, context_instance=RequestContext(request))
-
-##def charity(request, charity_id):
-##    return HttpResponse("You're looking at charity %s." % charity_id)
 
 def campaign(request, charity_id):
     return HttpResponse("You're looking at the campaigns of charity %s." % charity_id)
@@ -66,6 +50,7 @@ def redirect(request, donation_id):
     context = Context({'website': donation.campaign.website,})
     resp = HttpResponse(loader.get_template('redirect.html').render(context))
     resp.set_cookie('parentID', donation.id)
+    #TODO: redirect to website straight from here
     return resp
 
 def share(request, campaign_id):
@@ -74,4 +59,9 @@ def share(request, campaign_id):
     return render_to_response('share.html')
 
 def complete_donation(request):
+    tx = request.POST["tx"]
+    try:
+        print Donation.objects.get(transaction_id=tx)
+    except Donation.DoesNotExist:
+        print "Donation doesn't exist"
     return HttpResponse("Complete donation")

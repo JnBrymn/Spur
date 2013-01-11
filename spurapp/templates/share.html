@@ -42,10 +42,9 @@ $.ajaxSetup({
     }
 });
 
-
 var tx = getUrlVars()["tx"];
-$.post("/complete_donation", function(result) {
-  console.log("back!");
+$.post("/complete_donation", {tx:tx}, function(result) {
+  console.log(result);
   alert(tx);
 });
 </script>
