@@ -12,11 +12,9 @@ from lib.paypal import PayPal
 
 
 def transaction_complete(parameters):
-    #TODO this is where you do something interesting with the parameters
+    #delete this printout eventually TODO
     for k in parameters:
         print k,"-->",parameters[k]
-
-    #import pdb; pdb.set_trace()
 
     try:
         donor = Donor.objects.get(email=parameters["payer_email"])
@@ -24,12 +22,9 @@ def transaction_complete(parameters):
         donor = Donor(name=parameters["first_name"]+" "+parameters["last_name"], email=
                   parameters["payer_email"])
         donor.save()
-    
-    # get all fields possible
-##    try:
-##        donation = Donation.objects.get(donor=donor, campaign
+
     donation = Donation(amount=parameters["mc_gross"], donor=donor,
-                        date=datetime.datetime.now(),
+                        date=timezone.now(),
                         transaction_id=parameters["txn_id"])
     donation.save()
 
