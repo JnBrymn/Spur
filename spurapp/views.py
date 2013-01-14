@@ -12,10 +12,6 @@ from lib.paypal import PayPal
 
 
 def transaction_complete(parameters):
-    #delete this printout eventually TODO
-    for k in parameters:
-        print k,"-->",parameters[k]
-
     try:
         donor = Donor.objects.get(email=parameters["payer_email"])
     except Donor.DoesNotExist:
@@ -51,21 +47,14 @@ def redirect(request, donation_id):
     return resp
 
 def share(request, campaign_id):
+    tx = request.GET["tx"]
+    donation = Donation.objects.get(transaction_id=tx) #add try/except to "get" lines
+    parentID = request.COOKIES["parentID"]
+    if parentID:
+        parent_donation = Donation.objects.get(id=parentID)
+        donation.parent_donation = parent_donation
+        donation.save()
+        donation.percolate_donation()
     c = get_object_or_404(Campaign, pk=campaign_id)
     #TODO: eventually this will be a custom page for that campaign rather than the same page for everybody
     return render_to_response('share.html')
-
-def complete_donation(request):
-    tx = request.POST["tx"]
-    donation = Donation.objects.get(transaction_id=tx)
-    if donation:
-        if donation.parent_donation is None: #prevent abusing percolation
-            parentID = request.COOKIES["parentID"]
-            if parentID:
-                parent_donation = Donation.objects.get(id=parentID)
-                donation.parent_donation = parent_donation
-                donation.save()
-                donation.percolate_donation()    
-    else:
-        print "Donation doesn't exist"
-    return HttpResponse("Complete donation")
