@@ -40,10 +40,8 @@ def redirect(request, donation_id):
     donation = get_object_or_404(Donation, pk=donation_id)
     (donation.clicks)+=1
     donation.save()
-    context = Context({'website': donation.campaign.website,})
-    resp = HttpResponse(loader.get_template('redirect.html').render(context))
-    resp.set_cookie('parent_donation_for_campaign'+str(donation.campaign.id), donation.id)
-    #TODO: redirect to website straight from here
+    resp = HttpResponseRedirect(donation.campaign.website)
+    resp.set_cookie('parent_donation_for_campaign'+str(donation.campaign.id), donation.id, max_age=1000)
     return resp
 
 def share(request, campaign_id):
