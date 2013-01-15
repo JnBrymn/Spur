@@ -49,7 +49,7 @@ class DonationTrackingTest(TestCase):
         """
         #user clicks badge
         response = self.client.get('/redirect/1');
-        self.assertEqual(self.client.cookies['parentID'].value,'1')
+        self.assertEqual(self.client.cookies['parent_donation_for_campaign1'].value,'1')
         #user donates
         parameters = {
             "payer_email":"arthur@asdf.com",

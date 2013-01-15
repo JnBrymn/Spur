@@ -42,14 +42,14 @@ def redirect(request, donation_id):
     donation.save()
     context = Context({'website': donation.campaign.website,})
     resp = HttpResponse(loader.get_template('redirect.html').render(context))
-    resp.set_cookie('parentID', donation.id)
+    resp.set_cookie('parent_donation_for_campaign'+str(donation.campaign.id), donation.id)
     #TODO: redirect to website straight from here
     return resp
 
 def share(request, campaign_id):
     tx = request.GET["tx"]
     donation = Donation.objects.get(transaction_id=tx) #add try/except to "get" lines
-    parentID = request.COOKIES["parentID"]
+    parentID = request.COOKIES["parent_donation_for_campaign"+str(campaign_id)]
     if parentID:
         parent_donation = Donation.objects.get(id=parentID)
         donation.parent_donation = parent_donation
