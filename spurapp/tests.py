@@ -1,45 +1,65 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
 from spurapp.models import *
 from spurapp.views import *
-
-class SimpleTest(TestCase):
-    """
-    TODO: Remove this class
-    """
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+from random import randint
 
 class DonationTrackingTest(TestCase):
     def setUp(self):
-        self.make_fake_IPN("John Berryman","test@whatever.com",100,"1111")
-        self.make_fake_IPN("Krystal Xu","test@whoever.com",100,"2222")
-        charity = Charity.objects.create(name="UNICEF")
-        campaign = Campaign.objects.create(name="save babies",start_date=timezone.now(),end_date=timezone.now(),charity=charity,website="www.google.com")
-        donation = Donation.objects.get(transaction_id="1111")
-        donation.campaign=campaign
-        donation.save()
+        self.website="http://www.google.com"
+        self.charity = Charity.objects.create(name="UNICEF")
+        self.campaign = Campaign.objects.create(name="save babies",start_date=timezone.now(),end_date=timezone.now(),charity=self.charity,website=self.website)
 
-    def make_fake_IPN(self,name,email,amount,transaction_id):
-        names = (name + " ").split(" ")
+        self.campaign_id = str(self.campaign.pk)
+
+        self.john = Donor.objects.create(name='John Berryman', email='jfberryman@gmail.com')
+        self.john_donation = Donation.objects.create(amount=50, donor=self.john, date=timezone.now(), transaction_id='1111', campaign=self.campaign)
+        self.john_donation_id = str(self.john_donation.pk)
+
+
+    def test_redirect(self):
+        """
+        Clicking a badge (e.g. a redirect link) should redirect you to the appropriate page.
+        """
+        response = self.client.get('/redirect/'+ self.john_donation_id)
+        self.assertNotEqual(response.status_code,404)
+        self.assertRedirects(response,self.website)
+
+    def test_badge_click_cookie(self):
+        """
+        If a new user clicks a badge (e.g. a redirect link) then they should get a cookie associated
+        with the badge's donation and campaign.
+        """
+        #user clicks badge
+        response = self.client.get('/redirect/'+ self.john_donation_id);
+        self.assertEqual(self.client.cookies['parent_donation_for_campaign_'+ self.campaign_id].value,self.john_donation_id)
+
+    def click_badge_donate_visit_share_page(self, name, amount, donation_clicked=None):
+        """
+        Click badge (associated with donation_clicked - defaults to badge in setUp),
+        donate specified amount under specified name, and visit share page. Return resulting
+        donation.
+        """
+        if not ' ' in name:
+            raise Exception("name assumed to have space so as to denote first and last names")
+        name = name.split(' ')
+        transaction_id = str(randint(100000,999999))
+        #user clicks badge
+        if donation_clicked:
+            self.client.get('/redirect/'+ str(donation_clicked.pk))
+        else:
+            self.client.get('/redirect/'+ self.john_donation_id);
+        #user donates
         parameters = {
-            "payer_email":email,
-            "first_name": names[0],
-            "last_name": names[1],
+            "payer_email":"doesnot@matter.com",
+            "first_name": name[0],
+            "last_name": name[1],
             "mc_gross": amount,
             "txn_id": transaction_id,
         }
-        #refactor so that transaction_complete is in a test TODO
         transaction_complete(parameters)
+        #user visits share page
+        self.client.get("/share/"+ self.campaign_id  +"?tx="+ transaction_id )
+        return Donation.objects.get(transaction_id=transaction_id)
 
     def test_donation_completion(self):
         """
@@ -47,26 +67,22 @@ class DonationTrackingTest(TestCase):
         Donor should be created, should have the appropriate parent_donation,
         and amount.
         """
-        #user clicks badge
-        response = self.client.get('/redirect/1');
-        self.assertEqual(self.client.cookies['parent_donation_for_campaign1'].value,'1')
-        #user donates
-        parameters = {
-            "payer_email":"arthur@asdf.com",
-            "first_name": "Arthur",
-            "last_name": "Wu",
-            "mc_gross": 50,
-            "txn_id": "3333",
-        }
-        transaction_complete(parameters)
-        donation = Donation.objects.get(transaction_id="3333")
+        donation = self.click_badge_donate_visit_share_page("Arthur Wu",50)
+        self.assertTrue(donation)
         self.assertEqual(donation.donor.name,"Arthur Wu")
-        #user shares
-        response = self.client.get('/share/1?tx=3333')
-        donation = Donation.objects.get(pk=donation.pk)
         self.assertEqual(donation.parent_donation.donor.name,"John Berryman")
 
-    def test_donation_creation(self):
-        donation = Donation.objects.get(transaction_id="1111")
-        self.assertEqual(donation.donor.name,"John Berryman")
+    def test_percolation_of_traits(self):
+        raise Exception("incomplete!")
+        donation_1 = self.click_badge_donate_visit_share_page("Krystal Xu",50)
+        donation_11 = self.click_badge_donate_visit_share_page("Kasey McKenna",50,donation_1)
+
+    def test_facebook_share(self):
+        pass
+
+    def test_twitter_share(self):
+        pass
+
+    def test_email(self):
+        pass
 
