@@ -31,7 +31,7 @@ class DonationTrackingTest(TestCase):
         response = self.client.get('/redirect/'+ self.john_donation_id)
         self.assertEqual(self.client.cookies['parent_donation_for_campaign_'+ self.campaign_id].value,self.john_donation_id)
 
-    def click_badge_donate_visit_share_page(self, name, amount, donation_clicked=None):
+    def click_badge_donate_visit_share_page(self, name, amount, _transaction_id, _email, donation_clicked=None):
         """
         Click badge (associated with donation_clicked - defaults to badge in setUp),
         donate specified amount under specified name, and visit share page. Return resulting
@@ -40,7 +40,7 @@ class DonationTrackingTest(TestCase):
         if not ' ' in name:
             raise Exception("name assumed to have space so as to denote first and last names")
         name = name.split(' ')
-        transaction_id = str(randint(100000,999999))
+        transaction_id = _transaction_id
         #user clicks badge
         if donation_clicked:
             self.client.get('/redirect/'+ str(donation_clicked.pk))
@@ -48,7 +48,7 @@ class DonationTrackingTest(TestCase):
             self.client.get('/redirect/'+ self.john_donation_id)
         #user donates
         parameters = {
-            "payer_email":"doesnot@matter.com",
+            "payer_email": _email,
             "first_name": name[0],
             "last_name": name[1],
             "mc_gross": amount,
@@ -56,7 +56,7 @@ class DonationTrackingTest(TestCase):
         }
         transaction_complete(parameters)
         #user visits share page
-        self.client.get("/share/"+ self.campaign_id +"?tx="+ transaction_id )
+        self.client.get("/share/"+ self.campaign_id +"?tx="+str(transaction_id))
         return Donation.objects.get(transaction_id=transaction_id)
 
     def test_donation_completion(self):
@@ -65,16 +65,16 @@ class DonationTrackingTest(TestCase):
         Donor should be created, should have the appropriate parent_donation,
         and amount.
         """
-        donation = self.click_badge_donate_visit_share_page("Arthur Wu",50)
+        donation = self.click_badge_donate_visit_share_page("Arthur Wu",50,1000)
         self.assertTrue(donation)
         self.assertEqual(donation.donor.name,"Arthur Wu")
         self.assertEqual(donation.parent_donation.donor.name,"John Berryman")
 
     def test_percolation_of_traits(self):
         #raise Exception("incomplete!")
-        donation_1 = self.click_badge_donate_visit_share_page("Grand Parent",50)
-        donation_11 = self.click_badge_donate_visit_share_page("Pa Rent",40,donation_1)
-        donation_12 = self.click_badge_donate_visit_share_page("Grand Kid",20,donation_11)
+        donation_1 = self.click_badge_donate_visit_share_page("Grand Parent",50,1001, "grandparent@gmail.com")
+        donation_11 = self.click_badge_donate_visit_share_page("Pa Rent",40,1002, "parent@gmail.com", donation_1)
+        donation_12 = self.click_badge_donate_visit_share_page("Grand Kid",20,1003, "grandkid@gmail.com", donation_11)
         self.assertEqual(donation_1.cumulative_amt, 110)
         self.assertEqual(donation_11.cumulative_amt, 60)
         self.assertEqual(donation_12.cumulative_amt, 20)
