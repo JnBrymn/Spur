@@ -32,12 +32,11 @@ class Donation(models.Model):
     clicks = models.IntegerField(default=0)
     transaction_id = models.CharField(max_length=100, null=True)
     def __unicode__(self):
-        return ("Amount: "+str(self.amount)+
-                "_Campaign: "+str(self.campaign.name if self.campaign else "CAMPAIGN UNSPECIFIED")+
-                "_Donor: "+self.donor.name+
-                "_Date: "+str(self.date)+
-                "_Cumu: "+str(self.cumulative_amt)+
-                "_Clicks: "+str(self.clicks))
+        return ("{DonorName:"+self.donor.name+
+                ", Amount:"+str(self.amount)+
+                ", Campaign:"+str(self.campaign.name if self.campaign else "CAMPAIGN UNSPECIFIED")+
+                ", Cumulative:"+str(self.cumulative_amt)+
+                ", Clicks:"+str(self.clicks)+"}")
     def percolate_donation(self):
         if self.parent_donation:
             self.parent_donation.cumulative_amt += self.amount

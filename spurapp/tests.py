@@ -40,6 +40,7 @@ class DonationTrackingTest(TestCase):
         if not ' ' in name:
             raise Exception("name assumed to have space so as to denote first and last names")
         name = name.split(' ')
+        import pdb; pdb.set_trace()
         transaction_id = str(randint(100000,999999))
         #user clicks badge
         if donation_clicked:
@@ -48,7 +49,7 @@ class DonationTrackingTest(TestCase):
             self.client.get('/redirect/'+ self.john_donation_id)
         #user donates
         parameters = {
-            "payer_email":"doesnot@matter.com",
+            "payer_email":"doesnot"+ transaction_id +"@matter.com",
             "first_name": name[0],
             "last_name": name[1],
             "mc_gross": amount,
