@@ -40,7 +40,6 @@ class DonationTrackingTest(TestCase):
         if not ' ' in name:
             raise Exception("name assumed to have space so as to denote first and last names")
         name = name.split(' ')
-        import pdb; pdb.set_trace()
         transaction_id = str(randint(100000,999999))
         #user clicks badge
         if donation_clicked:
@@ -73,12 +72,10 @@ class DonationTrackingTest(TestCase):
 
     def test_percolation_of_traits(self):
         #raise Exception("incomplete!")
-        donation_1 = self.click_badge_donate_visit_share_page("Grand Parent",50)
-        donation_11 = self.click_badge_donate_visit_share_page("Pa Rent",40,donation_1)
-        donation_12 = self.click_badge_donate_visit_share_page("Grand Kid",20,donation_11)
-        self.assertEqual(donation_1.cumulative_amt, 110)
-        self.assertEqual(donation_11.cumulative_amt, 60)
-        self.assertEqual(donation_12.cumulative_amt, 20)
+        granny_donation = self.click_badge_donate_visit_share_page("Granny Spur",50)
+        momma_donation = self.click_badge_donate_visit_share_page("Momma Spur",30,granny_donation)
+        import pdb; pdb.set_trace()
+        self.assertEqual( granny_donation.cumulative_amt, 50)
 
     def test_facebook_share(self):
         pass
