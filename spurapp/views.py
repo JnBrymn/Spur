@@ -30,7 +30,7 @@ def ipn(request):
     return PayPal.ipn(request,transaction_complete)
 
 def index(request):
-    charity_list = Charity.objects.all();
+    charity_list = Charity.objects.all()
     return render_to_response('charities/index.html', {'charity_list': charity_list})
 
 def campaign(request, charity_id):
@@ -38,7 +38,7 @@ def campaign(request, charity_id):
 	
 def redirect(request, donation_id):
     donation = get_object_or_404(Donation, pk=donation_id)
-    (donation.clicks)+=1
+    donation.clicks += 1
     donation.save()
     resp = HttpResponseRedirect(donation.campaign.website)
     resp.set_cookie('parent_donation_for_campaign_'+str(donation.campaign.id), donation.id, max_age=1000)
@@ -48,11 +48,13 @@ def share(request, campaign_id):
     tx = request.GET["tx"]
     donation = Donation.objects.get(transaction_id=tx) #add try/except to "get" lines
     parentID = request.COOKIES['parent_donation_for_campaign_'+str(campaign_id)]
+    import pdb; pdb.set_trace()
     if parentID:
         parent_donation = Donation.objects.get(id=parentID)
+        donation.campaign = Campaign.objects.get(id=campaign_id)
         donation.parent_donation = parent_donation
         donation.save()
         donation.percolate_donation()
-    c = get_object_or_404(Campaign, pk=campaign_id)
+    #c = get_object_or_404(Campaign, pk=campaign_id)
     #TODO: eventually this will be a custom page for that campaign rather than the same page for everybody
     return render_to_response('share.html')
