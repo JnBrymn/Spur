@@ -65,7 +65,7 @@ class DonationTrackingTest(TestCase):
         Donor should be created, should have the appropriate parent_donation,
         and amount.
         """
-        donation = self.click_badge_donate_visit_share_page("Arthur Wu",50,1000)
+        donation = self.click_badge_donate_visit_share_page("Arthur Wu",50)
         self.assertTrue(donation)
         self.assertEqual(donation.donor.name,"Arthur Wu")
         self.assertEqual(donation.parent_donation.donor.name,"John Berryman")
@@ -77,11 +77,13 @@ class DonationTrackingTest(TestCase):
         kid_donation = self.click_badge_donate_visit_share_page("Kiddie Spur",10,momma_donation)
         uncle_donation = self.click_badge_donate_visit_share_page("Uncle Spur",20,granny_donation)
         sibling_donation = self.click_badge_donate_visit_share_page("Sibling Spur",40,momma_donation)
+
         granny_donation = Donation.objects.get(pk=granny_donation.pk)
         momma_donation = Donation.objects.get(pk=momma_donation.pk)
+        kid_donation = Donation.objects.get(pk=kid_donation.pk)
         uncle_donation = Donation.objects.get(pk=uncle_donation.pk)
         sibling_donation = Donation.objects.get(pk=sibling_donation.pk)
-        kid_donation = Donation.objects.get(pk=kid_donation.pk)
+
         self.assertEqual( granny_donation.cumulative_amt, 150)
         self.assertEqual( momma_donation.cumulative_amt, 80)
         self.assertEqual( kid_donation.cumulative_amt, 10)
