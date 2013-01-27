@@ -37,11 +37,11 @@ class Donation(models.Model):
                 ", Campaign:"+str(self.campaign.name if self.campaign else "CAMPAIGN UNSPECIFIED")+
                 ", Cumulative:"+str(self.cumulative_amt)+
                 ", Clicks:"+str(self.clicks)+"}")
-    def percolate_donation(self):
+    def percolate_donation(self, amount):
         if self.parent_donation:
-            self.parent_donation.cumulative_amt += self.amount
+            self.parent_donation.cumulative_amt += amount
             self.parent_donation.save()
-            self.parent_donation.percolate_donation()
+            self.parent_donation.percolate_donation(amount)
         #TODO remove this print statement
         #print ("Adding %s's donation to %s's cumulative_donation. Now it's %f." % (
         #    self.donor.name, self.parent_donation.donor.name, self.parent_donation.cumulative_amt))

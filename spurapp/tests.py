@@ -40,7 +40,6 @@ class DonationTrackingTest(TestCase):
         if not ' ' in name:
             raise Exception("name assumed to have space so as to denote first and last names")
         name = name.split(' ')
-        import pdb; pdb.set_trace()
         transaction_id = str(randint(100000,999999))
         #user clicks badge
         if donation_clicked:
@@ -69,6 +68,25 @@ class DonationTrackingTest(TestCase):
         donation = self.click_badge_donate_visit_share_page("Arthur Wu",50,1000)
         self.assertTrue(donation)
         self.assertEqual(donation.donor.name,"Arthur Wu")
+        self.assertEqual(donation.parent_donation.donor.name,"John Berryman")
+
+    def test_percolation_of_traits(self):
+        #raise Exception("incomplete!")
+        granny_donation = self.click_badge_donate_visit_share_page("Granny Spur",50)
+        momma_donation = self.click_badge_donate_visit_share_page("Momma Spur",30,granny_donation)
+        kid_donation = self.click_badge_donate_visit_share_page("Kiddie Spur",10,momma_donation)
+        uncle_donation = self.click_badge_donate_visit_share_page("Uncle Spur",20,granny_donation)
+        sibling_donation = self.click_badge_donate_visit_share_page("Sibling Spur",40,momma_donation)
+        granny_donation = Donation.objects.get(pk=granny_donation.pk)
+        momma_donation = Donation.objects.get(pk=momma_donation.pk)
+        uncle_donation = Donation.objects.get(pk=uncle_donation.pk)
+        sibling_donation = Donation.objects.get(pk=sibling_donation.pk)
+        kid_donation = Donation.objects.get(pk=kid_donation.pk)
+        self.assertEqual( granny_donation.cumulative_amt, 150)
+        self.assertEqual( momma_donation.cumulative_amt, 80)
+        self.assertEqual( kid_donation.cumulative_amt, 10)
+        self.assertEqual( uncle_donation.cumulative_amt, 20)
+        self.assertEqual( sibling_donation.cumulative_amt, 40)
 
     def test_facebook_share(self):
         pass

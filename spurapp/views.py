@@ -48,13 +48,12 @@ def share(request, campaign_id):
     tx = request.GET["tx"]
     donation = Donation.objects.get(transaction_id=tx) #add try/except to "get" lines
     parentID = request.COOKIES['parent_donation_for_campaign_'+str(campaign_id)]
-    import pdb; pdb.set_trace()
     if parentID:
         parent_donation = Donation.objects.get(id=parentID)
         donation.campaign = Campaign.objects.get(id=campaign_id)
         donation.parent_donation = parent_donation
         donation.save()
-        donation.percolate_donation()
+        donation.percolate_donation(donation.amount)
     #c = get_object_or_404(Campaign, pk=campaign_id)
     #TODO: eventually this will be a custom page for that campaign rather than the same page for everybody
     return render_to_response('share.html')
