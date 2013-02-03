@@ -19,7 +19,7 @@ window.fbAsyncInit = function() {
     });
 };
 
-function createBadge()
+function setUpFBLink()
 {
 	fblink = document.getElementById("facebook");
 	if(div == null) return;
@@ -30,7 +30,7 @@ function createBadge()
 			    // connected
 			    console.log("Logged in already. Ready to go!!!");
 			    short_token = response.authResponse.accessToken;
-			    recordDonation();
+			    share();
 			} else {
 			    // not_logged_in or not authorized
 			    login();
@@ -49,19 +49,28 @@ function login() {
     }, {scope: 'email,publish_actions'});
 }
 
-function createLink(id)
+function share(id)
 {
 	parent_id = getCookie("donatorbadge_parent");
-	var obj = {
-		method: 'feed',
-		link: donate_url+"?donatorbadge_parent="+id,
-		picture: 'http://proto.okcollaborative.org/badge.png',
-		name: fb_title,
-		caption: fb_caption,
-		description: fb_description
-	};
-
+	FB.ui(
+	  {
+	   method: 'feed',
+	   name: 'I just donated $$$$ to Charity!',
+	   caption: 'I just donated to charity and you should too!',
+	   description: (
+		  "I'm sharing the gift of giving. By clicking on this link and stuff you can donate to the charity I donated to and it's awesoemsauce!"
+	   ),
+	   link: 'http://sleepy-ridge-5514.herokuapp.com/'
+	  },
+	  function(response) {
+		if (response && response.post_id) {
+		  window.location.href = 'http://sleepy-ridge-5514.herokuapp.com/';
+		} else {
+		  alert('Post was not published.');
+		}
+	  }
+	);
 	console.log(donate_url+"?donatorbadge_parent="+id);
 	//FB.ui(obj, function(){document.write("Thank you for your donation!! Redirecting now..."); window.location.href = 'http://proto.okcollaborative.org/';});
-	FB.ui(obj, function(){window.location.href = 'http://proto.okcollaborative.org/';});
+	FB.ui(obj, function(){window.location.href = 'http://sleepy-ridge-5514.herokuapp.com/';});
 };
