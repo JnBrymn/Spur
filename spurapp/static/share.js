@@ -17,6 +17,8 @@ window.fbAsyncInit = function() {
       cookie     : true, // set sessions cookies to allow your server to access the session?
       xfbml      : true  // parse XFBML tags on this page?
     });
+    
+    setUpFBLink();
 };
 
 function setUpFBLink()
