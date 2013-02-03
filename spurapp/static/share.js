@@ -24,9 +24,8 @@ window.fbAsyncInit = function() {
 function setUpFBLink()
 {
 	fblink = document.getElementById("facebook");
-	if(div == null) return;
 	
-	fblink.onclick = function(){
+	$(fblink).click(function(){
 	    FB.getLoginStatus(function(response) {
 		    if (response.status === 'connected') {
 			    // connected
@@ -39,7 +38,7 @@ function setUpFBLink()
 			}
 		});
 		return false;
-	};
+	});
 };
 
 function login() {
