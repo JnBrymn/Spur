@@ -52,7 +52,6 @@ function login() {
 
 function share(id)
 {
-	parent_id = getCookie("donatorbadge_parent");
 	FB.ui(
 	  {
 	   method: 'feed',
