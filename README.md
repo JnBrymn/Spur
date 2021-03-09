@@ -36,5 +36,5 @@ Running in Heroku
     heroku run python manage.py syncdb
     heroku open
 
-stuff
+other stuff
 
